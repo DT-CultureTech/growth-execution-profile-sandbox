@@ -1,0 +1,214 @@
+{
+  "kind": "growth-execution-v1",
+  "profile": {
+    "company": "Northwind Appliances Limited",
+    "intro": {
+      "partOne": {
+        "financial snapshot": "FY2026 revenue Rs 1,200.0 crore, up 9.0%. Gross margin 36.0%. EBITDA Rs 120.0 crore at 10.0%, against 10.4% the year before. PAT Rs 30.0 crore. Net debt Rs 20.0 crore. ROCE 10.0%.",
+        "capacity": "Three manufacturing locations and about 5,000 employees.",
+        "capability": "Makes and sells across five appliance categories under Northwind, and distributes a licensed premium brand in its home market.",
+        "offer": "Kitchen and home appliances across five categories at value prices, plus a semi-premium fitted range. Published prices run Rs 4,000 to Rs 40,000.",
+        "buyer": "Households buying a kitchen appliance, reached three ways: general-trade outlets where the shopkeeper chooses the shelf, marketplaces where the platform owns the relationship, and own stores where the company does.",
+        "monetization": "FY2026 revenue Rs 1,200.0 crore at a 36.0% gross margin, converting to a 10.0% EBITDA margin and a Rs 30.0 crore profit.",
+        "position": "Question: against whom is a sale actually lost, a same-price branded rival, an unbranded import at half, or the shopkeeper’s own preferred brand?",
+        "pricing power": "In one category, realised price per unit rose about 9% while volume grew 10%. Whether that is price or mix is not separable from public data.",
+        "growth initiatives": "250 own stores across 18 states, 50 added during the year, contributing 6.0% of revenue."
+      },
+      "partTwo": []
+    },
+    "pmf": {
+      "elements": {
+        "buyer set": "Households buying a kitchen appliance, reached three ways: general-trade outlets where the shopkeeper chooses the shelf, marketplaces where the platform owns the relationship, and own stores where the company does.",
+        "job": "Hypothesis: to equip or re-equip a kitchen at a price a middle-income household will pay, from a brand the local shop already carries.",
+        "alternative": "Question: a same-price branded rival, an unbranded import at half the price, or the shopkeeper’s own preferred brand. Nothing public separates them.",
+        "offer": "Kitchen and home appliances across five categories at value prices, plus a semi-premium fitted range. Published prices run Rs 4,000 to Rs 40,000.",
+        "sacrifice": "Hypothesis: buyers in one category paid about 9% more per unit and still bought 10% more units. Derived from reported value and volume growth; mix would produce the same arithmetic.",
+        "direction": "Question: is that realisation widening or narrowing? One year is a point, not a direction."
+      }
+    },
+    "innovation": {
+      "elements": {
+        "locus": "",
+        "the difference": "",
+        "the contrast": "",
+        "the moat": "",
+        "evidence": "",
+        "magnitude": ""
+      },
+      "unevidenced": true,
+      "note": "No offer-side difference reaches tier A or B from public sources. Two owned plants and incumbent shelf presence are real and neither is shown to be something competitors lack, so nothing is asserted."
+    },
+    "market": {
+      "model": "b2c",
+      "levers": {
+        "v1": {
+          "inThisModel": "number of buyers",
+          "status": "The company exports to 10 countries. No export revenue and no per-market figure is published anywhere.",
+          "move": "Rank the 10 export markets by contribution and repeat order rate, and decide which three to resource.",
+          "test": "For the last 24 months, pull order value, gross margin and reorder frequency for each of the 10 countries. Rank them. It is a yes to concentrate if the top three markets carry more than 70% of export contribution, which would mean the other eleven are consuming attention for very little.",
+          "disconfirmer": "Contribution is spread evenly across the fourteen with similar reorder rates, which would make this a genuine distributed export book and concentration the wrong move.",
+          "confidence": 4,
+          "confidenceBasis": "The 10 countries and the two plants are the company's own stated figures (CL-005, tier B). What those markets are worth is not published at all, so this scores 4 and the first step reads it from the company's own order book."
+        },
+        "v2": {
+          "inThisModel": "purchases per buyer",
+          "status": "The range spans five categories a household could buy from repeatedly, sold through four marketplaces as well as 250 own stores. Every marketplace holds the buyer identity and the company does not.",
+          "move": "Decide whether owning the buyer identity is worth paying for, before spending more on category extension.",
+          "test": "Take own-retail and own-website transactions for 24 months, the only channels where identity exists, and count how many buyers purchased in more than one category and at what interval. It is a yes to invest in identity if more than 20% bought a second category, because that rate applied to the other 92.5% of revenue is the prize.",
+          "disconfirmer": "Under 20% of identified buyers ever buy a second category, in which case the range is six separate one-off purchases and effort belongs in V1 or V3 instead.",
+          "confidence": 4,
+          "confidenceBasis": "The category spread, the channel list and the 329 own stores are observed (CL-001, CL-004, CL-005). That repeat is unmeasured outside owned channels is reasoned from the channel list, not stated by the company, so this scores 4 and the look-back tests it cheaply."
+        },
+        "v3": {
+          "inThisModel": "units or scope per purchase",
+          "status": "The semi-premium range covers only the two items a fitted kitchen buys together, and nothing sells them as one purchase.",
+          "move": "Sell the fitted pair as one priced purchase through the channel where kitchens are specified.",
+          "test": "Publish three matched chimney-and-hob sets at a set price and place them with 20 kitchen dealers and modular-kitchen specifiers. Over one quarter, measure attach rate, the share of chimney sales that carry a hob, against the preceding quarter. It is a yes if attach rate rises by 15 percentage points or more without gross margin percentage on the pair falling.",
+          "disconfirmer": "Attach rate does not move, or the pairs only replace two-item sales that were already happening, which would mean the buyer already treats them as one purchase and the packaging adds nothing.",
+          "confidence": 6,
+          "confidenceBasis": "The category spread, the two-item Northwind Fit range and the price band are all observed on the company's own site (CL-001, CL-006, tier B). That chimney and hob are a single purchase decision is reasoned, and the attach-rate baseline settles it from the company's own sales data."
+        },
+        "m1": {
+          "inThisModel": "realised price",
+          "status": "In one category, value grew 20% and volume grew 10%, so realised price per unit rose about 9% while units still grew.",
+          "move": "Find which other categories have the same shape, by splitting value and volume growth per category.",
+          "test": "Split FY2026 that category value and volume by stock-keeping unit to separate a price effect from a mix effect, then do the same for every other category. Where a genuine price effect appears, take a 5% list increase into one category for one quarter. It is a yes if unit volume falls by less than 5% and realised price per unit holds the increase.",
+          "disconfirmer": "Volume drops more than 5% on the price move, meaning the that category gap came from mix inside the category, bigger units selling, rather than from buyers paying more for the same thing.",
+          "confidence": 8,
+          "confidenceBasis": "Both figures are from the same reported FY2026 result and both sides of the comparison are counted (CL-003, tier A). The whole-company gross margin move is from the same source (CL-002)."
+        },
+        "m2": {
+          "inThisModel": "cost per delivered unit",
+          "status": "Gross margin was 36.0% and EBITDA margin 10.0%. Between them sit 26 points of revenue, about Rs 312 crore. Revenue grew 9.0% and the EBITDA margin fell 40 basis points.",
+          "move": "Split the gap between gross margin and EBITDA into its lines and decide which should scale with revenue.",
+          "test": "Take FY2025 and FY2026 and break the gross-to-EBITDA gap into advertising and trade spend, freight and warehousing, own-retail running cost, and everything else. For each line, compute the change as a percentage of the change in revenue. Any line rising faster than revenue is the answer. It is a yes to act if a single line accounts for more than a third of the incremental gap.",
+          "disconfirmer": "Every line grows in step with revenue and none rises faster, in which case the margin is structural to the category and the question is pricing, which is M1, not cost.",
+          "confidence": 8,
+          "confidenceBasis": "All figures are from the same reported FY2026 consolidated result with the prior year alongside (CL-002, tier A). The arithmetic is stated, not inferred. What sits inside the gap is explicitly not public, which is what the split is for."
+        },
+        "m3": {
+          "inThisModel": "contribution through mix",
+          "status": "Own retail produced 6.0% of revenue from 250 stores, about Rs 2.4 lakh per store per month. The rest is split across trade, marketplaces and exports with no published split.",
+          "move": "Fix the cost-allocation basis, then rank channels on contribution per rupee of capital employed.",
+          "test": "Before any arithmetic, fix in writing how central advertising, brand spend and warehousing are apportioned between own retail, trade and marketplaces, because that choice decides the answer. Then for FY2026 compute, per channel: revenue at the price it is actually booked, gross margin realised, allocated operating cost, and inventory plus receivables tied up. Express each as contribution per rupee of capital employed. It is a yes to accelerate own retail if it returns 1.5 times the trade channel on that measure, and a yes to slow it if it returns less.",
+          "disconfirmer": "The channels come within 20% of each other once allocated, in which case the rollout should be paced by where the brand is absent rather than by return, and the question moves to reach, which is V1.",
+          "confidence": 8,
+          "confidenceBasis": "The 7.5%, the 250 stores and the 67 additions are from the reported FY2026 result (CL-004, tier A) and the per-store arithmetic is shown. No revenue-per-trade-outlet figure is computed, because the non-own-retail revenue cannot be attributed to trade outlets from public data."
+        }
+      }
+    },
+    "growthExecution": {
+      "opportunities": [
+        {
+          "family": "Route to market",
+          "ebitdaTerm": "Volume through idle capacity",
+          "item": "250 own stores make 6.0% of revenue; the 251st is opened against a revenue-share number that cannot price capital."
+        },
+        {
+          "family": "Single-point physical",
+          "ebitdaTerm": "Price and mix",
+          "item": "Rs 312 crore sits between a 36.0% gross margin and a 10.0% EBITDA margin."
+        },
+        {
+          "family": "Self-imposed scope",
+          "ebitdaTerm": "Volume at near-zero incremental fixed cost",
+          "item": "Ten export markets with no published figure for any of them."
+        }
+      ],
+      "highVelocityTests": [
+        {
+          "lever": "M1",
+          "bound": "Split FY2026 that category value and volume by stock-keeping unit to separate a price effect from a mix effect, then do the same for every other category. Where a genuine price effect appears, take a 5% list increase into one category for one quarter. It is a yes if unit volume falls by less than 5% and realised price per unit holds the increase.",
+          "disconfirmer": "Volume drops more than 5% on the price move, meaning the that category gap came from mix inside the category, bigger units selling, rather than from buyers paying more for the same thing."
+        },
+        {
+          "lever": "M2",
+          "bound": "Take FY2025 and FY2026 and break the gross-to-EBITDA gap into advertising and trade spend, freight and warehousing, own-retail running cost, and everything else. For each line, compute the change as a percentage of the change in revenue. Any line rising faster than revenue is the answer. It is a yes to act if a single line accounts for more than a third of the incremental gap.",
+          "disconfirmer": "Every line grows in step with revenue and none rises faster, in which case the margin is structural to the category and the question is pricing, which is M1, not cost."
+        },
+        {
+          "lever": "M3",
+          "bound": "Before any arithmetic, fix in writing how central advertising, brand spend and warehousing are apportioned between own retail, trade and marketplaces, because that choice decides the answer. Then for FY2026 compute, per channel: revenue at the price it is actually booked, gross margin realised, allocated operating cost, and inventory plus receivables tied up. Express each as contribution per rupee of capital employed. It is a yes to accelerate own retail if it returns 1.5 times the trade channel on that measure, and a yes to slow it if it returns less.",
+          "disconfirmer": "The channels come within 20% of each other once allocated, in which case the rollout should be paced by where the brand is absent rather than by return, and the question moves to reach, which is V1."
+        },
+        {
+          "lever": "V1",
+          "bound": "For the last 24 months, pull order value, gross margin and reorder frequency for each of the 10 countries. Rank them. It is a yes to concentrate if the top three markets carry more than 70% of export contribution, which would mean the other eleven are consuming attention for very little.",
+          "disconfirmer": "Contribution is spread evenly across the fourteen with similar reorder rates, which would make this a genuine distributed export book and concentration the wrong move."
+        },
+        {
+          "lever": "V2",
+          "bound": "Take own-retail and own-website transactions for 24 months, the only channels where identity exists, and count how many buyers purchased in more than one category and at what interval. It is a yes to invest in identity if more than 20% bought a second category, because that rate applied to the other 92.5% of revenue is the prize.",
+          "disconfirmer": "Under 20% of identified buyers ever buy a second category, in which case the range is six separate one-off purchases and effort belongs in V1 or V3 instead."
+        },
+        {
+          "lever": "V3",
+          "bound": "Publish three matched chimney-and-hob sets at a set price and place them with 20 kitchen dealers and modular-kitchen specifiers. Over one quarter, measure attach rate, the share of chimney sales that carry a hob, against the preceding quarter. It is a yes if attach rate rises by 15 percentage points or more without gross margin percentage on the pair falling.",
+          "disconfirmer": "Attach rate does not move, or the pairs only replace two-item sales that were already happening, which would mean the buyer already treats them as one purchase and the packaging adds nothing."
+        }
+      ]
+    },
+    "researchRecord": {
+      "company": [
+        {
+          "fact": "CL-001",
+          "value": "Northwind sells appliances across five categories under its own brand and distributes a licensed premium brand.",
+          "source": "https://example.com/northwind/about",
+          "asOf": "2026-01-01",
+          "tier": "B"
+        },
+        {
+          "fact": "CL-002",
+          "value": "FY2026 revenue Rs 1,200.0 crore, gross margin 36.0%, EBITDA Rs 120.0 crore at 10.0%, PAT Rs 30.0 crore.",
+          "source": "https://example.com/northwind/results-fy2026",
+          "asOf": "FY2026",
+          "tier": "A"
+        },
+        {
+          "fact": "CL-003",
+          "value": "In one category value grew 20% and volume grew 10%.",
+          "source": "https://example.com/northwind/results-fy2026",
+          "asOf": "FY2026",
+          "tier": "A"
+        },
+        {
+          "fact": "CL-004",
+          "value": "Own retail contributed 6.0% of revenue from 250 stores across 18 states, with 50 added in the year.",
+          "source": "https://example.com/northwind/results-fy2026",
+          "asOf": "FY2026",
+          "tier": "A"
+        },
+        {
+          "fact": "CL-005",
+          "value": "The company states three plants, about 5,000 employees and exports to 10 countries.",
+          "source": "https://example.com/northwind/about",
+          "asOf": "2026-01-01",
+          "tier": "B"
+        }
+      ],
+      "exemplars": []
+    },
+    "annexure": {
+      "title": "How these numbers were arrived at",
+      "preface": "Every figure is either a reported result or arithmetic on one, with the working shown. THIS IS DUMMY DATA.",
+      "blocks": [
+        {
+          "heading": "CALC-1",
+          "body": "The gap between gross margin and EBITDA. (36.0% - 10.0%) x Rs 1,200.0 crore = Rs 312 crore."
+        },
+        {
+          "heading": "CALC-2",
+          "body": "Own-retail revenue. 6.0% x Rs 1,200.0 crore = Rs 72.0 crore."
+        },
+        {
+          "heading": "CALC-3",
+          "body": "Revenue per own store. Rs 72.0 crore / 250 stores = Rs 28.8 lakh per year, about Rs 2.4 lakh per month."
+        },
+        {
+          "heading": "CALC-4",
+          "body": "Implied price move. 1.20 / 1.10 = 1.09, about 9% more per unit. Limit: mix produces identical arithmetic."
+        }
+      ]
+    }
+  }
+}
