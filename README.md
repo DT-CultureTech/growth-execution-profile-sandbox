@@ -2,7 +2,7 @@
 
 The real rendering component for a Growth Execution Profile, with **dummy data**, so the UI can be worked on without touching production or seeing any real company.
 
-## What is here
+## What is here 
 
 ```
 src/components/growth-execution/   the production component, copied unchanged
