@@ -28,7 +28,20 @@
  */
 
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import {
+  BookOpen,
+  Calculator,
+  Factory,
+  Rocket,
+  SlidersHorizontal,
+  Target,
+  type LucideIcon,
+} from "lucide-react";
 import styles from "./growth-execution.module.css";
+import { Dock } from "./Dock";
+import { BorderGlow } from "./BorderGlow";
+import { FinancialSnapshot } from "./FinancialSnapshot";
+import { isDrawable, readSnapshot } from "./financial-snapshot";
 import { growthExecutionFontVars } from "./growth-execution-fonts";
 import {
   HERO_CELLS,
@@ -78,6 +91,40 @@ const BASE_SECTIONS = [
 ];
 
 const ANNEXURE_SECTION = { id: "s04", num: "06", title: "Annexure" };
+
+/**
+ * The pointer glow on the clickable tiles, in the page's own blue. DT blue
+ * #0033ff is hsl(228 100% 50%); the glow runs lighter so it reads as light on a
+ * white tile rather than as a second, heavier border. Only tiles that do
+ * something when clicked carry it: a glow on a tile that does nothing tells
+ * the reader it is a control when it is not.
+ */
+const GLOW = {
+  glowColor: "228 100 62",
+  colors: ["#0033ff", "#4d6bff", "#9aaeff"],
+  borderRadius: 16,
+  glowRadius: 26,
+  glowIntensity: 0.9,
+  edgeSensitivity: 30,
+  coneSpread: 25,
+  fillOpacity: 0.35,
+  tone: "theme" as const,
+};
+
+/** The tile surface for each state, as the page token it maps to. */
+const tileSurface = (on: boolean, lit: boolean) =>
+  on ? "var(--card)" : lit ? "color-mix(in srgb, var(--blue) 7%, var(--tile))" : "var(--tile)";
+
+/** One icon per section, for the dock. Keyed by section id so the order and the
+ *  titles stay owned by the section list above. */
+const SECTION_ICON: Record<string, LucideIcon> = {
+  s1A: SlidersHorizontal,
+  s00: Factory,
+  s1B: Target,
+  s02: Rocket,
+  s03: BookOpen,
+  s04: Calculator,
+};
 
 /* ── small pieces ─────────────────────────────────────────────────────── */
 
@@ -459,6 +506,12 @@ export function GrowthExecutionRenderer({ profile }: { profile: GrowthExecutionC
   }, [sections]);
 
   const heroCells = HERO_CELLS.filter((k) => !isBlank(partOne[k]));
+  const snapshot = heroCells.includes("financial snapshot") ? partOne["financial snapshot"] : null;
+  const sideCells = heroCells.filter((k) => k !== "financial snapshot");
+  // The snapshot is drawn when enough of it reads plainly; otherwise the
+  // sentence stays on the company card as it always has.
+  const snapReading = useMemo(() => readSnapshot(snapshot ?? undefined), [snapshot]);
+  const snapDrawn = !!snapshot && isDrawable(snapReading);
   const introCells = INTRO_ORDER.filter(
     (k) => !isBlank(partOne[k]) && !HERO_CELLS.includes(k as (typeof HERO_CELLS)[number])
   );
@@ -497,23 +550,41 @@ export function GrowthExecutionRenderer({ profile }: { profile: GrowthExecutionC
     <div className={`${styles.root} ${growthExecutionFontVars}`}>
       <header className={styles.hero}>
         <div className={styles.heroIn}>
-          <p className={styles.eyebrow}>
-            Growth Execution Profile
-            {market.model ? ` · ${MODEL_LABEL[market.model] ?? market.model}` : ""}
-          </p>
-          <h1>{profile.company}</h1>
-          {!isBlank(intro.frame) ? <p className={styles.frame}>{intro.frame}</p> : null}
-          <div className={styles.heroRule} />
-          {heroCells.length ? (
-            <dl className={styles.snap}>
-              {heroCells.map((k) => (
-                <div key={k}>
-                  <dt>{k}</dt>
-                  <dd>{partOne[k]}</dd>
-                </div>
-              ))}
-            </dl>
-          ) : null}
+          {/* Bento split. The snapshot stays on the company card; capacity and
+              position stand beside it, and a side card with nothing behind it is
+              not drawn, so the company card takes the whole row. */}
+          <div className={sideCells.length ? styles.heroGrid : `${styles.heroGrid} ${styles.heroSolo}`}>
+            <div className={styles.heroMain}>
+              <p className={styles.eyebrow}>
+                Growth Execution Profile
+                {market.model ? ` · ${MODEL_LABEL[market.model] ?? market.model}` : ""}
+              </p>
+              <h1>{profile.company}</h1>
+              {!isBlank(intro.frame) ? <p className={styles.frame}>{intro.frame}</p> : null}
+              {snapshot && !snapDrawn ? (
+                <dl className={styles.snapPod}>
+                  <dt>financial snapshot</dt>
+                  <dd>{snapshot}</dd>
+                </dl>
+              ) : null}
+            </div>
+            {sideCells.length ? (
+              <div className={styles.heroSide}>
+                {sideCells.map((k) => (
+                  <dl
+                    key={k}
+                    className={
+                      k === "position" ? `${styles.heroCard} ${styles.heroCardNight}` : styles.heroCard
+                    }
+                  >
+                    <dt>{k}</dt>
+                    <dd>{partOne[k]}</dd>
+                  </dl>
+                ))}
+              </div>
+            ) : null}
+          </div>
+          {snapDrawn && snapshot ? <FinancialSnapshot reading={snapReading} sentence={snapshot} /> : null}
         </div>
       </header>
 
@@ -529,6 +600,28 @@ export function GrowthExecutionRenderer({ profile }: { profile: GrowthExecutionC
               {s.title}
             </a>
           ))}
+        </div>
+        {/* The dock, in the same sticky bar. On a screen with a mouse it replaces
+            the pill; on a touch screen it is hidden and the pill stays, because the
+            dock names a section only on hover and a finger cannot hover. */}
+        <div className={styles.dockWrap}>
+          <Dock
+            placement="top"
+            items={sections.map((s, i) => {
+              const Icon = SECTION_ICON[s.id];
+              return {
+                icon: Icon ? <Icon size={20} strokeWidth={1.75} /> : <b>{s.num}</b>,
+                label: `${s.num}  ${s.title}`,
+                active: i === activeSection,
+                onClick: () =>
+                  document.getElementById(s.id)?.scrollIntoView({ behavior: "smooth", block: "start" }),
+              };
+            })}
+            panelHeight={62}
+            baseItemSize={44}
+            magnification={62}
+            distance={160}
+          />
         </div>
       </nav>
 
@@ -647,21 +740,29 @@ export function GrowthExecutionRenderer({ profile }: { profile: GrowthExecutionC
                 {probeEntries.map(([name, p]) => {
                   const codes = leverCodes(p.feeds);
                   return (
-                    <button
+                    <BorderGlow
                       key={name}
-                      type="button"
-                      className={styles.probe}
-                      aria-pressed={litProbe === name}
-                      onClick={() => setLitProbe((cur) => (cur === name ? null : name))}
+                      {...GLOW}
+                      backgroundColor={tileSurface(false, litProbe === name)}
+                      className={
+                        litProbe === name ? `${styles.probeCard} ${styles.probeCardOn}` : styles.probeCard
+                      }
                     >
-                      <h4>{name}</h4>
-                      <p>{p.finding}</p>
-                      {codes.length ? (
-                        <p className={styles.feeds}>
-                          Feeds<b>{codes.join(" · ")}</b>
-                        </p>
-                      ) : null}
-                    </button>
+                      <button
+                        type="button"
+                        className={styles.probe}
+                        aria-pressed={litProbe === name}
+                        onClick={() => setLitProbe((cur) => (cur === name ? null : name))}
+                      >
+                        <h4>{name}</h4>
+                        <p>{p.finding}</p>
+                        {codes.length ? (
+                          <p className={styles.feeds}>
+                            Feeds<b>{codes.join(" · ")}</b>
+                          </p>
+                        ) : null}
+                      </button>
+                    </BorderGlow>
                   );
                 })}
               </div>
@@ -912,20 +1013,23 @@ function LeverTile({
   // Same rule as the drawer: M2 is on the call by identity, not by data.
   const isCall =
     code === "M2" || String(lever?.status ?? "").trim().toLowerCase() === WORKFLOW_MAP;
+  // The glow card is the tile's surface and border, so the open and lit states
+  // live on it; the button inside is the control and carries the name.
   return (
-    <button
-      type="button"
-      className={`${styles.tile} ${lit ? styles.tileLit : ""}`}
-      aria-expanded={open}
-      onClick={onToggle}
+    <BorderGlow
+      {...GLOW}
+      backgroundColor={tileSurface(open, lit)}
+      className={`${styles.tileCard} ${open ? styles.tileCardOpen : lit ? styles.tileCardLit : ""}`}
     >
-      <span className={styles.tileCode}>{code}</span>
-      <span className={styles.tileName}>{LEVER_NAME[code]}</span>
-      {feeds ? <span className={styles.tileFeed}>{feeds}</span> : null}
-      <span className={styles.tileState}>
-        <i className={`${styles.dot} ${isCall ? styles.dotCall : ""}`} />
-        {isCall ? "On the call" : "Read from outside"}
-      </span>
-    </button>
+      <button type="button" className={styles.tile} aria-expanded={open} onClick={onToggle}>
+        <span className={styles.tileCode}>{code}</span>
+        <span className={styles.tileName}>{LEVER_NAME[code]}</span>
+        {feeds ? <span className={styles.tileFeed}>{feeds}</span> : null}
+        <span className={styles.tileState}>
+          <i className={`${styles.dot} ${isCall ? styles.dotCall : ""}`} />
+          {isCall ? "On the call" : "Read from outside"}
+        </span>
+      </button>
+    </BorderGlow>
   );
 }

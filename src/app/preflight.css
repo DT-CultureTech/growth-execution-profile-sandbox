@@ -1,0 +1,50 @@
+/* SANDBOX ONLY. Not part of the component and never ported.
+ *
+ * PDGMS-Frontend loads Tailwind v4 globally (src/styles/theme.css), and its
+ * preflight resets every element before this component's stylesheet applies.
+ * Without the same reset here the sandbox draws boxes at different sizes from
+ * the live page, so a layout that looks right here can be wrong in production.
+ * These are the preflight rules the profile actually touches. */
+
+*, ::before, ::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+ol, ul, menu {
+  list-style: none;
+}
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+b, strong {
+  font-weight: bolder;
+}
+table {
+  text-indent: 0;
+  border-color: inherit;
+  border-collapse: collapse;
+}
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+  background-color: transparent;
+  border-radius: 0;
+}
+button {
+  cursor: pointer;
+}
+img, svg {
+  display: block;
+  max-width: 100%;
+}

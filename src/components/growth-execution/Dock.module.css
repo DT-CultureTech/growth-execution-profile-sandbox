@@ -1,0 +1,130 @@
+/* The section dock. Colours come from the profile's own tokens (--card, --blue,
+ * --cardLine and the rest), so it follows the page into dark mode. It renders
+ * inside the profile root, which is where those tokens live. */
+
+/* Fixed to the bottom of the screen. The strip is click-through; only the
+   panel itself takes the pointer. */
+.outer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.panel {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  width: fit-content;
+  gap: 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid var(--cardLine, rgba(229, 229, 229, 0.85));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 18px 40px -12px rgba(0, 0, 0, 0.18);
+  padding: 0 10px 9px;
+}
+:global(:root[data-theme="dark"]) .panel {
+  background: rgba(17, 17, 19, 0.72);
+}
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme="light"])) .panel {
+    background: rgba(17, 17, 19, 0.72);
+  }
+}
+
+.item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 14px;
+  background: var(--card, #fff);
+  border: 1px solid var(--cardLine, rgba(229, 229, 229, 0.85));
+  color: var(--ink, #000);
+  box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  outline: none;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.item:focus-visible {
+  box-shadow: 0 0 0 2px var(--blue, #0033ff);
+}
+/* The section on screen: a solid blue tile, and a dot under it the way the
+   macOS dock marks an open app. */
+.itemOn {
+  background: var(--blue, #0033ff);
+  border-color: var(--blue, #0033ff);
+  color: #fff;
+}
+.itemOn::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: var(--blue, #0033ff);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  position: absolute;
+  top: -1.9rem;
+  left: 50%;
+  width: fit-content;
+  white-space: pre;
+  border-radius: 8px;
+  background: var(--night, #0a0a0a);
+  color: #fff;
+  padding: 3px 9px;
+  font-family: var(--body, system-ui, sans-serif);
+  font-size: 12px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+/* ── placement="top" ─────────────────────────────────────────────────────
+   The strip sits in the page flow (the caller makes it sticky) at a fixed
+   height. Items hang from the top edge of the panel and grow downward, out of
+   it, the mirror of the bottom dock. */
+.outerTop {
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  justify-content: center;
+}
+.panelTop {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  transform: none;
+  align-items: flex-start;
+  padding: 9px 10px 0;
+}
+.panelTop .itemOn::after {
+  bottom: auto;
+  top: -7px;
+}
+.labelBelow {
+  top: auto;
+  bottom: -1.9rem;
+}

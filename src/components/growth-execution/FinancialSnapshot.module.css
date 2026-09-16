@@ -1,0 +1,430 @@
+/* The drawn financial snapshot. Rendered inside the profile root, so it reads
+ * the page tokens (--card, --tile, --night, --blue, the type faces) and follows
+ * the page into dark mode. The look is the Apple stat card: one very large
+ * figure with tight tracking, quiet labels, rings and bars that grow in once. */
+
+.wrap {
+  --ring1: #0033ff;
+  --ring2: #3b82f6;
+  --ring3: #56b8f0;
+  --up: #1f9d48;
+  --upNight: #30d158;
+  --down: #d93025;
+  --downNight: #ff453a;
+
+  margin-top: var(--gap, 20px);
+  background: var(--card);
+  border: 1px solid var(--cardLine);
+  border-radius: var(--rCard, 24px);
+  box-shadow: var(--shadowCard);
+  padding: 22px 22px 20px;
+}
+:global(:root[data-theme="dark"]) .wrap {
+  --ring1: #7d97ff;
+  --ring2: #60a5fa;
+  --ring3: #7dd3fc;
+  --up: #30d158;
+  --down: #ff453a;
+}
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme="light"])) .wrap {
+    --ring1: #7d97ff;
+    --ring2: #60a5fa;
+    --ring3: #7dd3fc;
+    --up: #30d158;
+    --down: #ff453a;
+  }
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 6px 16px;
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.headRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.tileTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.periodNight {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: #b7c4ff;
+  background: rgba(125, 151, 255, 0.14);
+  border: 1px solid rgba(125, 151, 255, 0.22);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.period {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--blue);
+  background: var(--blueSoft);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
+}
+.grid[data-tiles="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.grid[data-tiles="3"] {
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.tile {
+  position: relative;
+  overflow: hidden;
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: 18px;
+  padding: 22px 22px 22px;
+  min-height: 196px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.tileLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: -0.005em;
+}
+
+/* ── the revenue tile ──────────────────────────────────────────────────── */
+.tileNight {
+  background: var(--night);
+  border-color: var(--nightLine);
+  box-shadow: var(--shadowNight);
+  color: #fff;
+  --muted: #a1a1aa;
+}
+.tileNight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(0, 51, 255, 0.34), transparent 55%),
+    radial-gradient(80% 60% at 0% 100%, rgba(86, 184, 240, 0.12), transparent 60%);
+  pointer-events: none;
+}
+.tileNight > * {
+  position: relative;
+}
+.hero {
+  margin-top: auto;
+}
+.moneyLg,
+.moneySm {
+  display: inline-flex;
+  align-items: baseline;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.moneyLg .cur {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-right: 8px;
+  letter-spacing: -0.01em;
+}
+.moneyLg .fig {
+  font-family: var(--display);
+  font-size: clamp(44px, 5vw, 64px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+.moneyLg .unit {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 8px;
+  letter-spacing: -0.01em;
+}
+.tileNight .moneyLg .fig {
+  background: linear-gradient(180deg, #ffffff 30%, #c9d3ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.chipUp,
+.chipDown {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-radius: 999px;
+  padding: 5px 11px 5px 9px;
+}
+.chipUp {
+  color: var(--upNight);
+  background: rgba(48, 209, 88, 0.14);
+}
+.chipDown {
+  color: var(--downNight);
+  background: rgba(255, 69, 58, 0.14);
+}
+.chipArrow {
+  width: 9px;
+  height: 9px;
+  fill: currentColor;
+}
+
+/* ── the rings ─────────────────────────────────────────────────────────── */
+.ringsRow {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: auto;
+}
+.rings {
+  width: 132px;
+  height: 132px;
+  flex: none;
+  transform: rotate(-90deg);
+}
+.track,
+.arc {
+  fill: none;
+}
+.track {
+  stroke: currentColor;
+  opacity: 0.13;
+}
+.arc {
+  stroke: currentColor;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ring1 {
+  color: var(--ring1);
+}
+.ring2 {
+  color: var(--ring2);
+}
+.ring3 {
+  color: var(--ring3);
+}
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.legend li {
+  display: grid;
+  grid-template-columns: 10px 1fr;
+  column-gap: 8px;
+  align-items: baseline;
+}
+.legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  align-self: center;
+}
+.dot1 {
+  background: var(--ring1);
+}
+.dot2 {
+  background: var(--ring2);
+}
+.dot3 {
+  background: var(--ring3);
+}
+.legendK {
+  font-size: 12px;
+  color: var(--muted);
+}
+.legendV {
+  grid-column: 2;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.prior {
+  grid-column: 2;
+  font-size: 11px;
+  color: var(--dim);
+}
+
+/* ── the bars ──────────────────────────────────────────────────────────── */
+.bars {
+  list-style: none;
+  margin: auto 0 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.barTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+.barK {
+  font-size: 12px;
+  color: var(--muted);
+}
+.moneySm {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.moneySm .cur {
+  color: var(--muted);
+  font-weight: 500;
+  margin-right: 4px;
+}
+.moneySm .unit {
+  color: var(--muted);
+  font-weight: 500;
+  margin-left: 4px;
+  font-size: 13px;
+}
+.barTrack {
+  height: 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  overflow: hidden;
+}
+.bar {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.barRev {
+  background: var(--ink);
+}
+.barEbitda {
+  background: linear-gradient(90deg, var(--ring1), var(--ring2));
+}
+.barPat {
+  background: linear-gradient(90deg, var(--ring2), var(--ring3));
+}
+
+/* ── the rest, and the record ──────────────────────────────────────────── */
+.extras {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.extras li {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+.extras span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.extras b {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+.extras .neg b {
+  color: var(--down);
+}
+
+.recordTile p {
+  margin: auto 0 0;
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  max-width: 44ch;
+}
+.record {
+  margin: 16px 6px 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 110ch;
+}
+.record span {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-right: 10px;
+}
+
+@media (max-width: 900px) {
+  .grid[data-tiles="3"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid[data-tiles="3"] > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 640px) {
+  .wrap {
+    padding: 16px 14px;
+    border-radius: 20px;
+  }
+  .grid[data-tiles="2"],
+  .grid[data-tiles="3"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tile {
+    min-height: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arc,
+  .bar {
+    transition: none;
+  }
+}

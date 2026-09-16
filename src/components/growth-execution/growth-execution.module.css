@@ -25,11 +25,29 @@
   --onblackRule: rgba(255, 255, 255, 0.14);
   --shell: 1180px;
 
+  /* Bento surfaces. The page is a warm ground; every section is a white card on
+     it, and anything inside a section is a grey tile inside that card. Depth
+     comes from the ground stepping up to the card, not from heavy shadows. */
+  --ground: #f7f6f4;
+  --card: #ffffff;
+  --cardLine: rgba(229, 229, 229, 0.85);
+  --tile: #fafafa;
+  --tileLine: rgba(229, 229, 229, 0.7);
+  --tileLineHover: #d4d4d4;
+  --night: #0a0a0a;
+  --nightLine: rgba(255, 255, 255, 0.1);
+  --rCard: 24px;
+  --rTile: 16px;
+  --rChip: 8px;
+  --shadowCard: 0 1px 3px rgba(0, 0, 0, 0.03), 0 10px 24px -8px rgba(0, 0, 0, 0.04);
+  --shadowNight: 0 12px 36px -8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --gap: 20px;
+
   --display: var(--gep-display), "Archivo", system-ui, sans-serif;
   --body: var(--gep-body), "DM Sans", system-ui, sans-serif;
   --mono: var(--gep-mono), "IBM Plex Mono", ui-monospace, monospace;
 
-  background: var(--paper);
+  background: var(--ground);
   color: var(--ink);
   font-family: var(--body);
   font-size: 14px;
@@ -52,6 +70,14 @@
     --blueLift: rgba(125, 151, 255, 0.2);
     --rule: #27272b;
     --ruleFaint: #1c1c20;
+    --ground: #09090b;
+    --card: #111113;
+    --cardLine: rgba(255, 255, 255, 0.08);
+    --tile: #18181b;
+    --tileLine: rgba(255, 255, 255, 0.07);
+    --tileLineHover: rgba(255, 255, 255, 0.16);
+    --night: #000000;
+    --shadowCard: none;
   }
 }
 :global(:root[data-theme="dark"]) .root {
@@ -66,6 +92,14 @@
   --blueLift: rgba(125, 151, 255, 0.2);
   --rule: #27272b;
   --ruleFaint: #1c1c20;
+  --ground: #09090b;
+  --card: #111113;
+  --cardLine: rgba(255, 255, 255, 0.08);
+  --tile: #18181b;
+  --tileLine: rgba(255, 255, 255, 0.07);
+  --tileLineHover: rgba(255, 255, 255, 0.16);
+  --night: #000000;
+  --shadowCard: none;
 }
 
 .root h1,
@@ -86,15 +120,20 @@
 .root h2 { font-weight: 700; }
 .root h3 { font-weight: 600; }
 .root h4 { font-weight: 500; }
-.root p {
+/* Zero specificity on purpose. As `.root p` this rule outranked every single
+   class, so the spacing written on .sub, .part, .move, .frame and the rest never
+   applied, on the live page as well. :where() keeps the reset and lets the
+   classes win. */
+:where(.root) p {
   margin: 0;
 }
 
 /* ── hero ─────────────────────────────────────────────────────────────── */
+/* A bento split: the company on a large dark card, and the two facts that
+   stand beside it (capacity, position) on smaller cards to its right. When a
+   side fact is absent its card is not drawn and the main card takes the row. */
 .hero {
-  background: #000;
-  color: #fff;
-  padding: 60px 0 0;
+  padding: 16px 0 0;
 }
 .heroIn,
 .navIn,
@@ -104,70 +143,191 @@
   padding-left: 26px;
   padding-right: 26px;
 }
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--gap);
+}
+.heroSolo {
+  grid-template-columns: minmax(0, 1fr);
+}
+.heroMain {
+  position: relative;
+  overflow: hidden;
+  background: var(--night);
+  color: #fff;
+  border: 1px solid var(--nightLine);
+  border-radius: var(--rCard);
+  box-shadow: var(--shadowNight);
+  padding: 44px 40px 36px;
+  display: flex;
+  flex-direction: column;
+}
+/* A faint blue light in the top corner, the only depth the dark card carries. */
+.heroMain::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto auto;
+  width: 60%;
+  height: 100%;
+  background: radial-gradient(ellipse at 85% 0%, rgba(0, 51, 255, 0.22), transparent 62%);
+  pointer-events: none;
+}
+.heroMain > * {
+  position: relative;
+}
+/* With the snapshot drawn in its own row, the company card holds only the
+   eyebrow, the name and the frame line. The name sits at the foot of the card,
+   the way a product page sets its title, rather than leaving the lower half
+   empty. */
+.heroMain > h1 {
+  margin-top: auto;
+  padding-top: 40px;
+}
+.heroSide {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+/* The first card takes the height its text needs; the last takes the rest, so
+   a short fact never sits in a tall empty card. */
+.heroSide > :last-child {
+  flex: 1;
+}
+.heroCard {
+  border-radius: var(--rCard);
+  padding: 28px 28px 26px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--cardLine);
+  box-shadow: var(--shadowCard);
+}
+.heroCardNight {
+  background: var(--night);
+  color: #fff;
+  border-color: var(--nightLine);
+  box-shadow: var(--shadowNight);
+}
+.heroCard dt {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.heroCardNight dt {
+  color: #7d97ff;
+}
+.heroCard dd {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
 .eyebrow {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #7d97ff;
+  background: rgba(0, 51, 255, 0.14);
+  border: 1px solid rgba(125, 151, 255, 0.28);
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+.eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7d97ff;
 }
 .hero h1 {
-  font-size: clamp(38px, 6.4vw, 72px);
+  font-size: clamp(36px, 5.6vw, 64px);
   font-weight: 700;
-  line-height: 0.98;
-  margin: 16px 0 0;
+  line-height: 1;
+  margin: 26px 0 0;
   letter-spacing: -0.04em;
   color: #fff;
 }
 .frame {
   max-width: 60ch;
   margin-top: 18px;
-  color: #c4c4cc;
-  font-size: 14px;
+  color: #b4b4bc;
+  font-size: 15px;
+  line-height: 1.55;
 }
-.heroRule {
-  height: 3px;
-  background: #0033ff;
-  margin-top: 32px;
+/* The financial snapshot, as one glass pod at the foot of the dark card. It
+   holds the sentence as written: splitting it into separate figures would be
+   new data, not a new layout. */
+.snapPod {
+  margin: 34px 0 0;
+  padding: 18px 20px;
+  border-radius: var(--rTile);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--nightLine);
 }
-.snap {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  border-top: 1px solid var(--onblackRule);
-  margin: 0;
-}
-.snap > div {
-  padding: 20px 22px 22px 0;
-}
-.snap dt {
+.snapPod dt {
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--onblackDim);
-  margin-bottom: 7px;
+  margin-bottom: 8px;
 }
-.snap dd {
+.snapPod dd {
   margin: 0;
   font-family: var(--display);
   font-weight: 500;
-  font-size: 14px;
-  line-height: 1.36;
+  font-size: 15px;
+  line-height: 1.5;
   color: #fff;
 }
 
 /* ── section nav ──────────────────────────────────────────────────────── */
+/* A frosted pill that floats over the page rather than a bar across it. */
 .nav {
   position: sticky;
-  top: 0;
+  top: 16px;
   z-index: 20;
-  background: var(--paper);
-  border-bottom: 1px solid var(--rule);
+  margin-top: var(--gap);
+  padding: 0 26px;
 }
 .navIn {
   display: flex;
+  align-items: center;
+  gap: 4px;
   overflow-x: auto;
   scrollbar-width: none;
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--cardLine);
+  border-radius: var(--rTile);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  max-width: calc(var(--shell) - 52px);
+  margin: 0 auto;
+}
+:global(:root[data-theme="dark"]) .navIn {
+  background: rgba(17, 17, 19, 0.8);
+}
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme="light"])) .navIn {
+    background: rgba(17, 17, 19, 0.8);
+  }
 }
 .navIn::-webkit-scrollbar {
   display: none;
@@ -175,64 +335,75 @@
 .nav a {
   display: flex;
   align-items: baseline;
-  gap: 9px;
-  padding: 13px 20px 12px 0;
-  margin-right: 20px;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 10px;
   text-decoration: none;
   color: var(--muted);
-  border-bottom: 2px solid transparent;
   white-space: nowrap;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.16s, color 0.16s;
 }
 .nav a b {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--dim);
 }
 .nav a:hover {
   color: var(--ink);
+  background: var(--tile);
 }
 .navOn {
   color: var(--ink) !important;
-  border-bottom-color: var(--blue) !important;
+  background: var(--blueSoft) !important;
 }
 .navOn b {
   color: var(--blue) !important;
 }
 
 .main {
+  padding-top: var(--gap);
   padding-bottom: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
 }
+/* Every section is a card on the ground. */
 .section {
-  padding: 58px 0 6px;
-  scroll-margin-top: 62px;
-  border-top: 1px solid var(--rule);
-}
-.section:first-of-type {
-  border-top: none;
+  background: var(--card);
+  border: 1px solid var(--cardLine);
+  border-radius: var(--rCard);
+  box-shadow: var(--shadowCard);
+  padding: 40px 40px 40px;
+  scroll-margin-top: 96px;
 }
 .head {
   display: flex;
-  align-items: baseline;
-  gap: 16px;
+  align-items: center;
+  gap: 14px;
 }
 .num {
   font-family: var(--mono);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--blue);
+  background: var(--blueSoft);
+  border-radius: var(--rChip);
+  padding: 4px 8px;
+  line-height: 1.2;
   flex: none;
 }
 .head h2 {
-  font-size: 26px;
-  letter-spacing: -0.028em;
+  font-size: 30px;
+  letter-spacing: -0.03em;
 }
 .sub {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 15px;
   max-width: 70ch;
-  margin: 10px 0 30px;
+  margin: 12px 0 34px;
 }
 .part {
   font-family: var(--mono);
@@ -240,9 +411,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dim);
-  margin: 44px 0 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--rule);
+  margin: 40px 0 14px;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -259,87 +428,120 @@
 }
 
 /* ── the lever board ──────────────────────────────────────────────────── */
+/* Each half of the board is a labelled row of three tiles. The label sits
+   above its row rather than in a column beside it, so the tiles get the full
+   width and read as one bento block. */
 .board {
   display: grid;
-  grid-template-columns: 88px repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 .rowlab {
+  grid-column: 1 / -1;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: baseline;
+  gap: 10px;
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dim);
-  border-right: 1px solid var(--rule);
-  padding-right: 12px;
-  line-height: 1.5;
+  padding: 6px 2px 0;
+}
+.rowlab:not(:first-child) {
+  margin-top: 10px;
 }
 .rowlab b {
-  display: block;
-  font-size: 14px;
+  font-size: 15px;
   font-family: var(--display);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ink);
   letter-spacing: -0.02em;
   text-transform: none;
-  margin-bottom: 2px;
+}
+/* The tile surface and border belong to its glow card (BorderGlow); the button
+   inside is transparent and fills it. The states sit on the card. The selectors
+   carry four classes so they outrank the glow card's own border and shadow,
+   including its dark-mode border, which weighs three. */
+.root .section .board .tileCard,
+.root .section .probes .probeCard {
+  border: 1px solid var(--tileLine);
+  box-shadow: none;
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+}
+.root .section .board .tileCard:hover,
+.root .section .probes .probeCard:hover {
+  border-color: var(--tileLineHover);
+  transform: translate3d(0, -2px, 0.01px);
+  box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.12);
+}
+.root .section .board .tileCardOpen,
+.root .section .board .tileCardOpen:hover {
+  border: 2px solid var(--blue);
+  box-shadow: 0 12px 28px -10px var(--blueLift);
+}
+.root .section .board .tileCardLit,
+.root .section .probes .probeCardOn {
+  border-color: var(--blue);
 }
 .tile {
   position: relative;
+  flex: 1;
+  width: 100%;
   text-align: left;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 5px;
-  padding: 15px 15px 14px;
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  padding: 20px 20px 16px;
   cursor: pointer;
   font: inherit;
   color: inherit;
-  min-height: 112px;
+  min-height: 150px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  transition: border-color 0.16s, background 0.16s, transform 0.16s, box-shadow 0.16s;
+  align-items: flex-start;
+  gap: 12px;
 }
-.tile:hover {
-  border-color: var(--blueLine);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px var(--blueLift);
+/* The open card's border is 2px, so the content steps in by one to stay put. */
+.tileCardOpen .tile {
+  padding: 19px 19px 15px;
 }
-.tile[aria-expanded="true"] {
-  border-color: var(--blue);
-  background: var(--blueSoft);
-  box-shadow: 0 4px 16px var(--blueLift);
-}
-.tileLit {
-  border-color: var(--blue);
-  background: var(--blueSoft);
-}
+/* The lever code sits in a small chip, the way the design marks an index. */
 .tileCode {
   font-family: var(--mono);
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--blue);
   line-height: 1;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--rChip);
+  padding: 7px 9px;
+}
+.tile[aria-expanded="true"] .tileCode {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
 }
 .tileName {
   font-family: var(--display);
-  font-weight: 500;
-  font-size: 14px;
-  letter-spacing: -0.015em;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.02em;
   line-height: 1.25;
 }
 .tileState {
   margin-top: auto;
+  align-self: stretch;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   color: var(--muted);
 }
 .dot {
@@ -354,20 +556,26 @@
 }
 .tileFeed {
   position: absolute;
-  top: 13px;
-  right: 13px;
+  top: 20px;
+  right: 18px;
   font-family: var(--mono);
   font-size: 10px;
   color: var(--dim);
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  min-width: 22px;
+  padding: 2px 7px;
+  text-align: center;
 }
 
+/* The drawer: the open lever's detail, as a grey panel holding white cards. */
 .drawer {
-  border: 1px solid var(--blue);
-  border-top: 3px solid var(--blue);
-  border-radius: 0 0 5px 5px;
-  background: var(--paper);
-  margin-top: 10px;
-  padding: 24px 26px;
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rCard);
+  background: var(--tile);
+  margin-top: 14px;
+  padding: 28px 28px 24px;
   animation: slide 0.22s ease-out;
 }
 @keyframes slide {
@@ -382,50 +590,70 @@
 }
 .drawerTop {
   display: flex;
-  align-items: baseline;
-  gap: 14px;
+  align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 .drawerTop h3 {
-  font-size: 21px;
+  font-size: 20px;
+  letter-spacing: -0.02em;
 }
 .drawerK {
   font-family: var(--mono);
-  font-size: 21px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--blue);
+  color: #fff;
+  background: var(--blue);
+  border-radius: 6px;
+  padding: 5px 8px;
   line-height: 1;
 }
 .drawerIn {
   color: var(--muted);
   font-size: 14px;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   max-width: 74ch;
 }
 /* The move is the answer, so it sits above the evidence and reads first. */
 .moveBlock {
-  border-left: 3px solid var(--blue);
-  padding: 2px 0 2px 16px;
-  margin: 0 0 22px;
-  max-width: 74ch;
+  background: var(--card);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rTile);
+  box-shadow: inset 3px 0 0 var(--blue);
+  padding: 18px 22px;
+  margin: 0 0 16px;
 }
 .move {
   font-size: 17px;
   line-height: 1.42;
   font-weight: 500;
   margin: 0 0 8px;
+  max-width: 74ch;
 }
 .why {
   font-size: 14px;
   line-height: 1.55;
   color: var(--muted);
   margin: 0;
+  max-width: 74ch;
 }
 .drawerGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 22px 34px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+.dg {
+  background: var(--card);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rTile);
+  padding: 16px 18px;
+}
+/* A box with only its heading has nothing to show, and an empty labelled box
+   reads as "we found nothing", which the page must never say. */
+.dg:empty,
+.dg:has(> h5:only-child) {
+  display: none;
 }
 .dg h5 {
   font-family: var(--mono);
@@ -434,30 +662,31 @@
   text-transform: uppercase;
   color: var(--dim);
   font-weight: 500;
-  margin: 0 0 9px;
-  padding-bottom: 7px;
-  border-bottom: 1px solid var(--ruleFaint);
+  margin: 0 0 10px;
 }
 .dg p {
   font-size: 14px;
   line-height: 1.5;
   margin-bottom: 10px;
 }
+.dg p:last-child {
+  margin-bottom: 0;
+}
 .who {
   font-family: var(--display);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   display: block;
   letter-spacing: -0.01em;
 }
 .pending {
   font-family: var(--mono);
-  font-size: 12px;
-  color: var(--warn);
-  background: rgba(230, 167, 0, 0.08);
+  font-size: 11px;
+  color: #a16207;
+  background: rgba(230, 167, 0, 0.1);
   border: 1px solid rgba(230, 167, 0, 0.3);
-  border-radius: 3px;
-  padding: 6px 10px;
+  border-radius: 999px;
+  padding: 5px 12px;
   display: inline-block;
 }
 .none {
@@ -467,27 +696,27 @@
 
 /* ── the scale ladder ─────────────────────────────────────────────────── */
 .ladder {
-  border: 1px solid var(--rule);
-  border-radius: 5px;
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rTile);
   overflow: hidden;
+  padding: 6px;
 }
 .rung {
   display: grid;
-  grid-template-columns: 190px 1fr;
+  grid-template-columns: 200px 1fr;
   gap: 0 20px;
   align-items: center;
-  padding: 15px 22px;
-  border-bottom: 1px solid var(--ruleFaint);
-}
-.rung:last-of-type {
-  border-bottom: none;
+  padding: 14px 18px;
+  border-radius: 12px;
 }
 .rungSelf {
-  background: var(--blueSoft);
+  background: var(--card);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .rungName {
   font-family: var(--display);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   letter-spacing: -0.015em;
   line-height: 1.25;
@@ -500,7 +729,7 @@
   color: var(--dim);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-top: 3px;
+  margin-top: 4px;
 }
 .rungTrack {
   position: relative;
@@ -511,8 +740,8 @@
 }
 .rungBar {
   height: 12px;
-  background: var(--blue);
-  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(0, 51, 255, 0.55), var(--blue));
+  border-radius: 999px;
   transition: width 0.8s cubic-bezier(0.16, 0.84, 0.44, 1);
 }
 .rungSelf .rungBar {
@@ -531,48 +760,40 @@
 }
 .rungGap {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--blue);
   margin-left: 9px;
   white-space: nowrap;
-  border: 1px solid var(--blueLine);
-  border-radius: 3px;
-  padding: 1px 6px;
+  background: var(--blueSoft);
+  border-radius: 999px;
+  padding: 2px 8px;
 }
 .axis {
   font-family: var(--mono);
   font-size: 10px;
   color: var(--dim);
-  padding: 11px 22px;
-  background: var(--paperDeep);
-  border-top: 1px solid var(--rule);
+  padding: 12px 18px 8px;
 }
 
 /* ── probes ───────────────────────────────────────────────────────────── */
 .probes {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 12px;
 }
 .probe {
+  flex: 1;
+  width: 100%;
   text-align: left;
   font: inherit;
   color: inherit;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 5px;
-  padding: 18px 20px;
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  padding: 20px 22px;
   cursor: pointer;
-  transition: border-color 0.16s, transform 0.16s, box-shadow 0.16s;
-}
-.probe:hover {
-  border-color: var(--blueLine);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px var(--blueLift);
-}
-.probe[aria-pressed="true"] {
-  border-color: var(--blue);
-  background: var(--blueSoft);
+  display: flex;
+  flex-direction: column;
 }
 .probe h4 {
   font-family: var(--mono);
@@ -588,63 +809,94 @@
   line-height: 1.55;
 }
 .feeds {
-  margin-top: 13px;
-  padding-top: 11px;
-  border-top: 1px solid var(--ruleFaint);
+  margin-top: auto;
+  padding-top: 12px;
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dim);
 }
+.probe p.feeds {
+  margin-top: auto;
+}
+.probe > p:not(.feeds) {
+  margin-bottom: 14px;
+}
 .feeds b {
   color: var(--blue);
   font-weight: 600;
-  margin-left: 5px;
+  margin-left: 6px;
   letter-spacing: 0.05em;
+  background: var(--card);
+  border: 1px solid var(--blueLine);
+  border-radius: 999px;
+  padding: 2px 8px;
 }
 
 /* ── fit and difference ───────────────────────────────────────────────── */
+/* Two bento cards side by side: product market fit on a light tile, innovation
+   on a dark card. An empty half keeps its heading but does not stretch to the
+   height of the other, so it never shows as a large empty panel. */
 .halves {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 12px;
+  gap: 16px;
+  align-items: stretch;
 }
 .half {
-  border: 1px solid var(--rule);
-  border-radius: 5px;
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rCard);
   overflow: hidden;
   min-width: 0;
 }
-.halfH {
-  background: var(--ink);
-  color: #fff;
-  padding: 15px 20px;
+.half:has(.halfB:empty) {
+  align-self: start;
 }
-:global(:root[data-theme="dark"]) .halfH {
-  background: #000;
+.halves > .half:last-child {
+  background: var(--night);
+  color: #fff;
+  border-color: var(--nightLine);
+  box-shadow: var(--shadowNight);
+  --rule: rgba(255, 255, 255, 0.1);
+  --ruleFaint: rgba(255, 255, 255, 0.08);
+  --dim: #8b8b94;
+  --muted: #a1a1aa;
+  --paperDeep: rgba(255, 255, 255, 0.05);
+}
+.halfH {
+  padding: 26px 28px 18px;
+  border-bottom: 1px solid var(--rule);
 }
 .halfH span {
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--onblackDim);
+  color: var(--dim);
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .halfH b {
   font-family: var(--display);
   font-weight: 700;
-  font-size: 17px;
-  letter-spacing: -0.02em;
+  font-size: 22px;
+  letter-spacing: -0.025em;
 }
 .halfB {
-  padding: 4px 20px 16px;
+  padding: 6px 28px 20px;
   margin: 0;
 }
+.halfB:empty {
+  display: none;
+}
+.halfB:empty ~ *,
+.half:has(.halfB:empty) .halfH {
+  border-bottom: none;
+}
 .el {
-  padding: 14px 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--ruleFaint);
 }
 .el:last-of-type {
@@ -656,20 +908,20 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dim);
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 }
 .el dd {
   margin: 0;
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 .meter {
-  margin-top: 13px;
-  padding: 13px 15px;
-  background: var(--paperDeep);
-  border-radius: 4px;
-  border-left: 3px solid var(--blue);
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1px solid var(--tileLine);
+  border-radius: 12px;
 }
 .meterTop {
   display: flex;
@@ -699,7 +951,7 @@
   flex: 1;
   height: 7px;
   background: var(--rule);
-  border-radius: 1px;
+  border-radius: 999px;
 }
 .meterOn {
   background: var(--blue) !important;
@@ -714,13 +966,19 @@
 /* ── intro fields, tables ─────────────────────────────────────────────── */
 .fields {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-  gap: 0 34px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
   margin: 0;
 }
 .f {
-  padding: 15px 0;
-  border-bottom: 1px solid var(--ruleFaint);
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rTile);
+  padding: 20px 22px;
+  transition: border-color 0.18s;
+}
+.f:hover {
+  border-color: var(--tileLineHover);
 }
 .f dt {
   font-family: var(--mono);
@@ -728,16 +986,20 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dim);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 .f dd {
   margin: 0;
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 .scroll {
   overflow-x: auto;
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rTile);
+  padding: 6px 20px;
 }
 .scroll table {
   border-collapse: collapse;
@@ -753,7 +1015,7 @@
   color: var(--dim);
   text-align: left;
   font-weight: 500;
-  padding: 0 20px 10px 0;
+  padding: 12px 20px 10px 0;
   border-bottom: 1px solid var(--rule);
   vertical-align: bottom;
 }
@@ -789,14 +1051,34 @@
 
 /* ── section 02 and the record ────────────────────────────────────────── */
 .next {
-  background: var(--paperDeep);
-  border: 1px solid var(--rule);
-  border-left: 3px solid var(--blue);
-  padding: 28px 30px;
+  margin-top: 28px;
+  background: var(--night);
+  color: #fff;
+  border: 1px solid var(--nightLine);
+  border-radius: var(--rCard);
+  box-shadow: var(--shadowNight);
+  padding: 32px 34px;
+  position: relative;
+  overflow: hidden;
+  --rule: rgba(255, 255, 255, 0.1);
+  --muted: #b4b4bc;
+}
+.next::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto auto;
+  width: 50%;
+  height: 100%;
+  background: radial-gradient(ellipse at 90% 0%, rgba(0, 51, 255, 0.2), transparent 60%);
+  pointer-events: none;
+}
+.next > * {
+  position: relative;
 }
 .next h3 {
-  font-size: 17px;
-  margin-bottom: 11px;
+  font-size: 22px;
+  letter-spacing: -0.025em;
+  margin-bottom: 12px;
 }
 .nextLead {
   color: var(--muted);
@@ -823,13 +1105,13 @@
   font-family: var(--mono);
   font-size: 12px;
   font-weight: 500;
-  color: var(--blue);
+  color: #7d97ff;
   padding-top: 3px;
 }
 .close {
-  margin-top: 44px;
-  padding: 26px 0 0;
-  border-top: 2px solid var(--ink);
+  margin-top: 28px;
+  padding: 22px 0 0;
+  border-top: 1px solid var(--rule);
   font-family: var(--display);
   font-weight: 600;
   font-size: 17px;
@@ -843,7 +1125,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink);
-  margin: 34px 0 12px;
+  margin: 30px 0 10px;
   font-weight: 500;
 }
 .recH:first-of-type {
@@ -855,18 +1137,19 @@
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--warn);
-  border: 1px solid var(--warn);
-  border-radius: 2px;
-  padding: 1px 5px;
+  color: #a16207;
+  background: rgba(230, 167, 0, 0.1);
+  border-radius: 999px;
+  padding: 2px 8px;
   margin-left: 8px;
 }
 /* What we looked for and did not find. Closed by default, and styled as
    apparatus: mono label, muted list, nothing that competes with the levers. */
 .gaps {
-  margin-top: 26px;
-  padding-top: 16px;
-  border-top: 1px solid var(--ruleFaint);
+  background: var(--card);
+  border: 1px solid var(--cardLine);
+  border-radius: var(--rTile);
+  padding: 14px 22px;
 }
 .gapsToggle {
   font-family: var(--mono);
@@ -897,9 +1180,11 @@
 @media (max-width: 620px) { .gapsBody ul { columns: 1; } }
 
 .footer {
-  border-top: 1px solid var(--rule);
-  margin-top: 60px;
-  padding: 26px 0;
+  background: var(--card);
+  border: 1px solid var(--cardLine);
+  border-radius: var(--rCard);
+  box-shadow: var(--shadowCard);
+  padding: 24px 32px;
   font-family: var(--mono);
   font-size: 12px;
   color: var(--dim);
@@ -925,18 +1210,6 @@
 @media (max-width: 760px) {
   .board {
     grid-template-columns: 1fr 1fr;
-  }
-  .rowlab {
-    grid-column: 1 / -1;
-    border-right: none;
-    border-bottom: 1px solid var(--rule);
-    padding: 0 0 8px;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 10px;
-  }
-  .rowlab b {
-    margin: 0;
   }
 }
 @media (max-width: 700px) {
@@ -972,33 +1245,35 @@
  * that we do not. Everything else is hairline and ink. */
 
 .ge2 {
-  margin: 34px 0 0;
+  margin: 36px 0 0;
+}
+.sub + .ge2 {
+  margin-top: 0;
 }
 .ge2 > h3 {
   font-family: var(--display);
-  font-size: 17px;
-  letter-spacing: -0.01em;
-  margin: 0 0 16px;
-  padding-bottom: 9px;
-  border-bottom: 1px solid var(--rule);
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
 }
 
 /* the workflow map */
 .wf {
   display: grid;
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
+  gap: 10px;
 }
 .wfRow {
   display: grid;
   grid-template-columns: 190px 1fr;
   gap: 22px;
-  background: var(--paper);
-  padding: 18px 20px;
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rTile);
+  padding: 20px 22px;
 }
 .wfOpen {
-  background: var(--paperDeep);
+  background: var(--card);
+  border-style: dashed;
 }
 .wfLab {
   font-family: var(--mono);
@@ -1062,22 +1337,24 @@
   font-family: var(--mono);
   font-size: 21px;
   letter-spacing: 0.02em;
-  padding: 20px 22px;
-  background: var(--ink);
+  padding: 22px 26px;
+  background: var(--night);
   color: #fff;
+  border-radius: var(--rTile);
+  box-shadow: var(--shadowNight);
   margin: 16px 0 0;
 }
 .vcTerms {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
-  border-top: 0;
+  gap: 10px;
+  margin-top: 10px;
 }
 .vcTerm {
-  background: var(--paper);
-  padding: 15px 17px;
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rTile);
+  padding: 16px 18px;
   display: grid;
   gap: 5px;
   align-content: start;
@@ -1097,7 +1374,7 @@
 }
 .vcYours {
   background: var(--blueSoft);
-  box-shadow: inset 3px 0 0 var(--blue);
+  border-color: var(--blueLine);
 }
 .vcYours em {
   font-style: normal;
@@ -1122,13 +1399,17 @@
 
 /* opportunities */
 .opp {
-  border: 1px solid var(--rule);
-  padding: 20px 22px;
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rTile);
+  padding: 22px 24px;
   margin: 0 0 12px;
 }
 .oppBind {
-  border-color: var(--blueLine);
-  background: var(--blueSoft);
+  border: 2px solid var(--blue);
+  padding: 21px 23px;
+  background: var(--card);
+  box-shadow: 0 12px 28px -12px var(--blueLift);
 }
 .oppTop {
   display: flex;
@@ -1143,7 +1424,10 @@
   color: var(--dim);
 }
 .oppFam {
-  font-weight: 500;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.015em;
 }
 .oppTag {
   font-family: var(--mono);
@@ -1152,16 +1436,19 @@
   text-transform: uppercase;
   background: var(--blue);
   color: #fff;
-  padding: 3px 8px;
+  border-radius: 999px;
+  padding: 3px 10px;
 }
 .oppLever {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--muted);
+  background: var(--card);
   border: 1px solid var(--rule);
-  padding: 2px 7px;
+  border-radius: 999px;
+  padding: 2px 9px;
 }
 .oppCon {
   margin: 0 0 12px;
@@ -1213,13 +1500,13 @@
 .hvts {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
+  gap: 12px;
 }
 .hvt {
-  background: var(--paper);
-  padding: 18px 20px;
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rTile);
+  padding: 20px 22px;
 }
 .hvtTop {
   display: flex;
@@ -1246,9 +1533,18 @@
  * carry gates, and every block states its own sources. */
 
 .anx {
-  margin: 28px 0 0;
-  padding-top: 22px;
-  border-top: 1px solid var(--rule);
+  margin: 14px 0 0;
+  background: var(--tile);
+  border: 1px solid var(--tileLine);
+  border-radius: var(--rTile);
+  padding: 22px 24px;
+}
+.sub + .anx {
+  margin-top: 0;
+}
+.anx .scroll {
+  background: var(--card);
+  margin-top: 6px;
 }
 .anx h3 {
   font-family: var(--display);
@@ -1270,5 +1566,96 @@
   }
   .vcExpr {
     font-size: 17px;
+  }
+}
+
+/* Inside a test card the fields are rows, not tiles: a tile inside a tile
+   reads as a second layer of structure that is not there. */
+.hvt .f {
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.hvt .f:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+/* A test with no class name and no opportunity has an empty header strip. */
+.hvtTop:has(> b:empty:only-child) {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .root {
+    --gap: 14px;
+  }
+  .heroIn,
+  .main,
+  .nav {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .heroMain {
+    padding: 30px 22px 24px;
+  }
+  .heroCard {
+    padding: 22px 22px 20px;
+  }
+  .section {
+    padding: 28px 20px;
+    border-radius: 20px;
+  }
+  .board {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tile {
+    min-height: 0;
+  }
+  .drawer {
+    padding: 20px 16px;
+  }
+  .halfH,
+  .halfB {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .next {
+    padding: 26px 22px;
+  }
+  .footer {
+    padding: 20px 22px;
+  }
+}
+
+/* ── the dock ─────────────────────────────────────────────────────────────
+ * The dock lives in the sticky bar at the top, in place of the pill. It is shown
+ * only where the pointer can hover (a mouse or trackpad); on touch screens the
+ * pill stays. The bar lets clicks through to the page; only the pill and the
+ * dock panel take the pointer. */
+.nav {
+  pointer-events: none;
+}
+.navIn {
+  pointer-events: auto;
+}
+.dockWrap {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .dockWrap {
+    display: block;
+  }
+  .navIn {
+    display: none;
+  }
+  .section {
+    scroll-margin-top: 104px;
   }
 }
