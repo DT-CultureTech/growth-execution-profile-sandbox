@@ -702,17 +702,35 @@ export function GrowthExecutionRenderer({ profile }: { profile: GrowthExecutionC
                     )}
                   </div>
                 ) : null}
-                <div className={styles.dg}>
-                  <h5>What the market says</h5>
-                  {(feedsBy[openLever] ?? []).length ? (
-                    feedsBy[openLever].map((f) => (
+                {/* Both columns below used to print their heading and then nothing,
+                    and an empty slot is the one thing this document must never show.
+                    A lever with no probe behind it and no exemplar that pulled it is
+                    ordinary: six probes cannot each feed all six levers, and three
+                    exemplars carry about two lever codes apiece. Measured on the 157
+                    live pages, at least one lever has no market finding on 137 of them
+                    and no exemplar on 149.
+
+                    The two columns are treated differently, on Tarun's instruction,
+                    2026-09-22, because the absences mean different things.
+
+                    No market finding says nothing about the business, only that the
+                    six findings on this page point elsewhere. So the column is dropped
+                    whole, heading included. The grid is auto-fit, so the remaining
+                    columns close the gap and the drawer reads as if it never had one.
+
+                    No exemplar is itself the finding: nobody we could see has pulled
+                    this lever. That is worth telling the owner, so it stays and says so. */}
+                {(feedsBy[openLever] ?? []).length ? (
+                  <div className={styles.dg}>
+                    <h5>What the market says</h5>
+                    {feedsBy[openLever].map((f) => (
                       <p key={f.name}>
                         <span className={styles.who}>{f.name}</span>
                         {f.finding}
                       </p>
-                    ))
-                  ) : null}
-                </div>
+                    ))}
+                  </div>
+                ) : null}
                 <div className={styles.dg}>
                   <h5>Who pulled it</h5>
                   {(pulledBy[openLever] ?? []).length ? (
@@ -722,7 +740,11 @@ export function GrowthExecutionRenderer({ profile }: { profile: GrowthExecutionC
                         {r["what commands the revenue"]}
                       </p>
                     ))
-                  ) : null}
+                  ) : (
+                    <p className={styles.none}>
+                      This idea is new. We don&rsquo;t know of any company that has tried it.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
